@@ -13,12 +13,16 @@ class Post(models.Model):
     def __str__(self):
         return f"Post ({self.user.username}) #{self.id}"
     
-    # def serialize(self):
-    #     return {
-    #         "id": self.id,
-    #         "user": self.user,
-    #         "timestamp": self.timestamp
-    #     }
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user,
+            "body": self.body,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+        }
+
+    class Meta:
+        ordering = ('-timestamp',)
 
 class Comment(models.Model):
     pass

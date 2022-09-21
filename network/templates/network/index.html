@@ -1,11 +1,43 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    <div>
-        {% for post in posts %}
-            <div class="">
 
+    <div id="all-posts">
+        <h3 class="title">{{ title }}</h3>
+
+        <div class="posts-section">
+            
+            <!-- Display form for composing the posts -->
+            {% if user.is_authenticated %}
+            <div id="post-form">
+                <h5 class="m-2">New Post</h5>
+                <form id="compose-form">
+                    <div>
+                        <textarea id="post-body" class="form-control m-1" placeholder="Write your post here"></textarea>
+                        <input type="submit" class="btn btn-primary m-1" value="Post">
+                    </div>
+                </form>
             </div>
-        {% endfor %}
+            {% endif %}
+
+            <!-- Display all the posts -->
+            {% for post in posts %}
+                <div class="card">
+                    <div class="card-title m-2">
+                        <strong>{{ post.user }}</strong>
+                        <div class="card-subtitle m-2 text-muted">
+                            {{ post.body }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
     </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/network.js' %}"></script>
 {% endblock %}

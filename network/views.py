@@ -1,8 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import User, Post
 
@@ -11,6 +15,7 @@ def index(request):
     posts = Post.objects.all()
     return render(request, "network/index.html", {
         "posts": posts,
+        "title": "All Posts"
     })
 
 
@@ -64,3 +69,23 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+@csrf_exempt
+@login_required
+def posting_compose(request):
+
+    # Composing a new post must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get contents of email
+    data = json.loads(request.body)
+    body = data.get("body", "")
+
+    post = Post(
+        user = request.user,
+        body = body,
+    )
+    post.save()
+    
+    return HttpResponseRedirect(reverse("index"))
