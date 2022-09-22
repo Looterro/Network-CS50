@@ -10,18 +10,35 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         })
         .then(response => response.json())
-        .then(result => {
-            //print result
-            console.log(result);
-        })
         .then(response => {
             fetch('')
             .then(response => response.json())
         })
     }
 
+    document.querySelector('.posts-section').innerHTML = function() {
+        
+    }
+
 });
 
 function load_posts() {
-    return undefined
+    fetch('')
+    .then(response => response.json())
+    .then(posts => {
+        posts.forEach(post => {
+            const element = document.createElement('div');
+            element.innerHTML = `
+                <div class="card">
+                    <div class="card-title m-2">
+                        <strong>${post.user}</strong>
+                        <div class="card-subtitle m-2 text-muted">
+                            ${post.body}
+                            <small>${post.timestamp}</small>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        document.querySelector('.posts-section').append(element);
+    });
 }

@@ -6,15 +6,15 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 import json
 
 from .models import User, Post
 
 
 def index(request):
-    posts = Post.objects.all()
     return render(request, "network/index.html", {
-        "posts": posts,
+        "posts": serializers.serialize('json', Post.objects.all()),
         "title": "All Posts"
     })
 
@@ -89,3 +89,7 @@ def posting_compose(request):
     post.save()
     
     return HttpResponseRedirect(reverse("index"))
+
+def posts(request):
+
+    posts = Post.objects.all()
