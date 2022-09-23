@@ -10,4 +10,5 @@ urlpatterns = [
     path("register", views.register, name="register"),
 
     path("posting_compose", views.posting_compose, name="posting_compose"),
+    path("posts", views.posts, name="posts"),
 ]

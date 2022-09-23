@@ -1,4 +1,4 @@
-.posts-section > div {
+#posts-section > div {
     border: none #dadde0; 
     box-shadow: 2px 2px 2px 2px #e9ecef; 
     border-radius: 6px;
@@ -6,19 +6,19 @@
     margin: 10px;
 }
 
-.posts-section {
-    border: solid 0.5px #dadde0; 
-    box-shadow: 5px 6px 6px 2px #e9ecef; 
+#post-form {
+    border: none #dadde0; 
+    box-shadow: 2px 2px 2px 2px #e9ecef; 
     border-radius: 6px;
     padding: 10px;
-    margin: 10px;
+    margin: 10px; 
 }
 
 #post-form {
     border: none;
 }
 
-.title {
+#title {
     margin: 12px;
 }
 

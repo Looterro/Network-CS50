@@ -4,7 +4,7 @@
 {% block body %}
 
     <div id="all-posts">
-        <h3 class="title">{{ title }}</h3>
+        <h3 id="title"></h3>
             
             <!-- Display form for composing the posts -->
             {% if user.is_authenticated %}
@@ -19,21 +19,9 @@
             </div>
             {% endif %}
         
-        <div class="posts-section">
-
-            <!-- Display all the posts
-            {% for post in posts %}
-                <div class="card">
-                    <div class="card-title m-2">
-                        <strong>{{ post.user }}</strong>
-                        <div class="card-subtitle m-2 text-muted">
-                            {{ post.body }}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %} -->
-
+        <div id="posts-section">
         </div>
+        
     </div>
 
 {% endblock %}

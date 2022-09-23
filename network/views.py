@@ -6,17 +6,13 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
 import json
 
 from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html", {
-        "posts": serializers.serialize('json', Post.objects.all()),
-        "title": "All Posts"
-    })
+    return render(request, "network/index.html")
 
 
 def login_view(request):
@@ -90,6 +86,12 @@ def posting_compose(request):
     
     return HttpResponseRedirect(reverse("index"))
 
+@csrf_exempt
+@login_required
 def posts(request):
 
     posts = Post.objects.all()
+    
+    # Return post contents
+    if request.method == "GET":
+        return JsonResponse([post.serialize() for post in posts], safe=False)

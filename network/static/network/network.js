@@ -16,14 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     }
 
-    document.querySelector('.posts-section').innerHTML = function() {
-        
-    }
-
+    load_posts()
 });
 
 function load_posts() {
-    fetch('')
+
+    // Display the title of the page
+    document.querySelector('#title').innerHTML = `All Posts`;
+
+    fetch('/posts')
     .then(response => response.json())
     .then(posts => {
         posts.forEach(post => {
@@ -31,14 +32,15 @@ function load_posts() {
             element.innerHTML = `
                 <div class="card">
                     <div class="card-title m-2">
-                        <strong>${post.user}</strong>
+                        <strong>${post['user']}</strong>
                         <div class="card-subtitle m-2 text-muted">
-                            ${post.body}
-                            <small>${post.timestamp}</small>
+                            ${post['body']}
+                            <br>
+                            <small>${post['timestamp']}</small>
                         </div>
                     </div>
                 </div>`;
+            document.querySelector('#posts-section').append(element);
         });
-        document.querySelector('.posts-section').append(element);
     });
 }
