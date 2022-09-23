@@ -22,3 +22,26 @@
     margin: 12px;
 }
 
+@keyframes display {
+    0% {
+        opacity: 0;
+        height: 0px;
+        line-height: 0px;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+    50% {
+        opacity: 0;
+        height: 100%;
+        line-height: 100%;
+        padding: 10px;
+        margin: 10px;
+    }
+    100% {   
+        opacity: 1;
+        height: 100%;
+        line-height: 100%;
+        padding: 10px;
+        margin: 10px;
+    }
+}

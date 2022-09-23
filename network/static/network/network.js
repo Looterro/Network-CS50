@@ -10,10 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         })
         .then(response => response.json())
-        .then(response => {
-            fetch('')
-            .then(response => response.json())
-        })
+        .then(response => load_posts())
     }
 
     load_posts()
