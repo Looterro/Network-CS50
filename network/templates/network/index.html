@@ -9,29 +9,53 @@
         <div class="posts-section">
             
             <!-- Display form for composing the posts -->
-            {% if user.is_authenticated %}
-            <div id="post-form">
-                <h5 class="m-2">New Post</h5>
-                <form id="compose-form">
-                    <div>
-                        <textarea id="post-body" class="form-control m-1" placeholder="Write your post here"></textarea>
-                        <input type="submit" class="btn btn-primary m-1" value="Post">
-                    </div>
-                </form>
-            </div>
+            {% if not page_obj.has_previous %}
+                {% if user.is_authenticated %}
+                <div id="post-form">
+                    <h5 class="m-2">New Post</h5>
+                    <form id="compose-form">
+                        <div>
+                            <textarea id="post-body" class="form-control m-1" placeholder="Write your post here"></textarea>
+                            <input type="submit" class="btn btn-primary m-1" value="Post">
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             {% endif %}
 
             <!-- Display all the posts -->
-            {% for post in posts %}
+            {% for post in page_obj %}
                 <div class="card">
                     <div class="card-title m-2">
                         <strong>{{ post.user }}</strong>
                         <div class="card-subtitle m-2 text-muted">
                             {{ post.body }}
+                            <br>
+                            <small>{{ post.timestamp }}</small>
                         </div>
                     </div>
                 </div>
             {% endfor %}
+
+            <div class="pagination">
+                <nav>
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+                        {% endif %}
+
+                        {% for page_obj in page_obj.paginator %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a></li>
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
 
         </div>
     </div>

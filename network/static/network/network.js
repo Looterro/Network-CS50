@@ -10,10 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         })
         .then(response => response.json())
-        .then(result => {
-            //print result
-            console.log(result);
-        })
         .then(response => {
             fetch('')
             .then(response => response.json())
