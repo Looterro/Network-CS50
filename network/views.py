@@ -96,7 +96,11 @@ def posts(request):
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    upper_page_limit = paginator.num_pages
     
     # Return post contents
     if request.method == "GET":
-        return JsonResponse([post.serialize() for post in posts], safe=False)
+        return JsonResponse({
+            "posts": [post.serialize() for post in page_obj],
+            "upper_page_limit": upper_page_limit,
+            }, safe=False)

@@ -16,16 +16,29 @@ document.addEventListener('DOMContentLoaded', function() {
     load_posts()
 });
 
-function load_posts() {
+
+function load_posts(page_number) {
+
+    // When loading the page, display the first page of posts
+    if (page_number===undefined) {page_number = 1};
 
     // Display the title of the page
     document.querySelector('#title').innerHTML = `All Posts`;
-
-    fetch('/posts')
+    
+    // Fetch posts
+    fetch(`/posts?page=${page_number}`)
     .then(response => response.json())
-    .then(posts => {
+    .then(data => {
+
+        // get posts
+        let posts = data.posts;
+
+        // get upper page limit
+        let upper_page_limit = data.upper_page_limit;
+        console.log(upper_page_limit)
+
         posts.forEach(post => {
-            const element = document.createElement('div');
+            let element = document.createElement('div');
             element.innerHTML = `
                 <div class="card">
                     <div class="card-title m-2">
@@ -39,5 +52,53 @@ function load_posts() {
                 </div>`;
             document.querySelector('#posts-section').append(element);
         });
+        
+        // Hide buttons if limit of pages reached
+        if (page_number <= 1) {
+            document.querySelector('#previous_paginator').style.display = 'none';
+        } else if (page_number === upper_page_limit) {
+            document.querySelector('#next_paginator').style.display = 'none';
+        }
+
+        // Hide new post submission if not on page 1
+
+        if (page_number != 1) {
+            document.querySelector('#post-form').style.display = 'none';
+        } else {
+            document.querySelector('#post-form').style.display = 'block';
+        }
+
     });
+
+    // Pagination button
+
+    let paginator = document.createElement('div');
+    paginator.innerHTML = `
+    <div>
+        <nav>
+            <ul class="pagination">
+                    <li id="previous_paginator" class="page-item"><a class="page-link">&laquo; previous</a></li>
+
+                    <li id="next_paginator" class="page-item"><a class="page-link"">next &raquo;</a></li>
+            </ul>
+        </nav>
+    </div>
+    `
+    document.querySelector('#pagination').append(paginator);
+
+    // Onclick change page of posts
+
+    document.querySelector('#previous_paginator').onclick = function() {
+        document.querySelector('#posts-section').innerHTML = '';
+        document.querySelector('#pagination').innerHTML = '';
+        page_number --;
+        load_posts(page_number)
+    }
+    document.querySelector('#next_paginator').onclick = function() {
+        document.querySelector('#posts-section').innerHTML = '';
+        document.querySelector('#pagination').innerHTML = '';
+        page_number ++;
+        load_posts(page_number)
+    }
+
 }
