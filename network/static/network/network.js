@@ -42,27 +42,47 @@ function load_posts(page_number) {
                 <div class="card">
                     <div class="card-title m-2">
                         <strong>${post['user']}</strong>
-                        <div class="card-subtitle m-2 text-muted">
+                        <div id="text-area-${post['id']}" class="card-subtitle m-2 text-muted">
                             ${post['body']}
                             <br>
-                            <small>${post['timestamp']}</small>
+                            <small id="timestamp-${post['id']}">${post['timestamp']}</small>
                         </div>
                     </div>
                 </div>`;
             document.querySelector('#posts-section').append(element);
 
-            console.log(post['id'])
             // Hide edit button if user is not owner of the post
             username = document.querySelector('#username').innerHTML
-            console.log(username)
-            console.log(post['user'])
             if ( post['user'] == username ) {
                 let button = document.createElement('button');
-                button.className = 'edit btn btn-primary';
+                button.className = 'edit btn btn-secondary btn-sm';
                 button.innerHTML = 'Edit';
-                document.querySelector('#posts-section').append(button);
+
+                button.addEventListener('click', () => {
+                    edit_post(post)
+                })
+
+                element.appendChild(button);
             }
         });
+
+        // Edit post
+
+        function edit_post(post) {
+            console.log(post, post.id , post.body);
+            let textArea = document.createElement('div');
+            textArea.innerHTML = `
+                <form>
+                    <textarea class="form-control m-1">${post.body}</textarea>
+                    <input type="submit" class="btn btn-primary m-1" value="Save Changes">
+                </form>
+            `;
+            console.log(textArea.innerHtml);
+            let target = document.querySelector(`#text-area-${post.id}`)
+            console.log(target.innerHTML);
+            target.innerHTML = '';
+            target.appendChild(textArea);
+        }
 
         // Hide buttons if limit of pages reached
         if (page_number <= 1) {
