@@ -32,7 +32,6 @@ function load_posts(page_number) {
 
         // get posts
         let posts = data.posts;
-
         // get upper page limit
         let upper_page_limit = data.upper_page_limit;
         console.log(upper_page_limit)
@@ -51,8 +50,20 @@ function load_posts(page_number) {
                     </div>
                 </div>`;
             document.querySelector('#posts-section').append(element);
+
+            console.log(post['id'])
+            // Hide edit button if user is not owner of the post
+            username = document.querySelector('#username').innerHTML
+            console.log(username)
+            console.log(post['user'])
+            if ( post['user'] == username ) {
+                let button = document.createElement('button');
+                button.className = 'edit btn btn-primary';
+                button.innerHTML = 'Edit';
+                document.querySelector('#posts-section').append(button);
+            }
         });
-        
+
         // Hide buttons if limit of pages reached
         if (page_number <= 1) {
             document.querySelector('#previous_paginator').style.display = 'none';
@@ -78,7 +89,6 @@ function load_posts(page_number) {
         <nav>
             <ul class="pagination">
                     <li id="previous_paginator" class="page-item"><a class="page-link">&laquo; previous</a></li>
-
                     <li id="next_paginator" class="page-item"><a class="page-link"">next &raquo;</a></li>
             </ul>
         </nav>

@@ -3,29 +3,31 @@
 
 {% block body %}
 
-    <div id="all-posts">
-        <h3 id="title"></h3>
+    {% if user.is_authenticated %}
+        <div id="all-posts">
+            <h3 id="title"></h3>
+                
+                <!-- Display form for composing the posts -->
+                {% if user.is_authenticated %}
+                <div id="post-form">
+                    <h5 class="m-2">New Post</h5>
+                    <form id="compose-form">
+                        <div>
+                            <textarea id="post-body" class="form-control m-1" placeholder="Write your post here"></textarea>
+                            <input type="submit" class="btn btn-primary m-1" value="Post">
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             
-            <!-- Display form for composing the posts -->
-            {% if user.is_authenticated %}
-            <div id="post-form">
-                <h5 class="m-2">New Post</h5>
-                <form id="compose-form">
-                    <div>
-                        <textarea id="post-body" class="form-control m-1" placeholder="Write your post here"></textarea>
-                        <input type="submit" class="btn btn-primary m-1" value="Post">
-                    </div>
-                </form>
+            <div id="posts-section">
             </div>
-            {% endif %}
-        
-        <div id="posts-section">
-        </div>
-        
-        <div id="pagination">
-        </div>
+            
+            <div id="pagination">
+            </div>
 
-    </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
