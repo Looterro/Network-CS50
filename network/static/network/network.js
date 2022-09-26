@@ -58,31 +58,15 @@ function load_posts(page_number) {
                 button.className = 'edit btn btn-secondary btn-sm';
                 button.innerHTML = 'Edit';
 
+                // If user clicks edit button, hide button and run edit post function
                 button.addEventListener('click', () => {
                     edit_post(post)
+                    element.removeChild(button);
                 })
 
                 element.appendChild(button);
             }
         });
-
-        // Edit post
-
-        function edit_post(post) {
-            console.log(post, post.id , post.body);
-            let textArea = document.createElement('div');
-            textArea.innerHTML = `
-                <form>
-                    <textarea class="form-control m-1">${post.body}</textarea>
-                    <input type="submit" class="btn btn-primary m-1" value="Save Changes">
-                </form>
-            `;
-            console.log(textArea.innerHtml);
-            let target = document.querySelector(`#text-area-${post.id}`)
-            console.log(target.innerHTML);
-            target.innerHTML = '';
-            target.appendChild(textArea);
-        }
 
         // Hide buttons if limit of pages reached
         if (page_number <= 1) {
@@ -100,6 +84,46 @@ function load_posts(page_number) {
         }
 
     });
+
+    // Edit post function, pre-populate textarea with former text
+
+    function edit_post(post) {
+        console.log(post, post.id , post.body);
+        let textArea = document.createElement('div');
+        textArea.innerHTML = `
+            <form id="edit_form_${post.id}">
+                <textarea id="edit-post-body-${post.id}" class="form-control m-1">${post.body}</textarea>
+                <input type="submit" class="btn btn-primary m-1" value="Save Changes">
+            </form>
+        `;
+        console.log(textArea.innerHTML);
+        let target = document.querySelector(`#text-area-${post.id}`)
+        console.log(target.innerHTML, target.id);
+        //Manipulate DOM to remove former body and append the form
+        target.innerHTML = '';
+        target.appendChild(textArea);
+
+        //hide new post submission and only display the text area for edit
+        document.querySelector('#post-form').style.display = 'none';
+        
+        console.log(post['id']);
+        console.log(post.id);
+        
+        // Use PUT to change the text of a post
+        document.querySelector(`#edit_form_${post.id}`).addEventListener('submit', function() {
+            //fetch post and put new value and add ID
+            fetch('/edit_post/' + post['id'], {
+                method: 'PUT',
+                body: JSON.stringify({
+                    body: document.querySelector(`#edit-post-body-${post['id']}`).value,
+                })
+            })
+            .then(response => response.json())
+            .then(response => load_posts())
+        });
+        return false;
+        //TODO ONCLICK SAVE CHANGES - Fetch? Form submission like it was? SAVE POST DOESNT WORK BECAUSE ITS ONLY GET /? METHOD INSTEAD OF PUT
+    }
 
     // Pagination button
 

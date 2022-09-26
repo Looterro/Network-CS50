@@ -104,3 +104,23 @@ def posts(request):
             "posts": [post.serialize() for post in page_obj],
             "upper_page_limit": upper_page_limit,
             }, safe=False)
+
+@csrf_exempt
+@login_required
+def edit_post(request, post_id):
+
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    data = json.loads(request.body)
+
+    if 'body' not in data:
+        return JsonResponse({"error": "Please specify the new message"}, status=400)
+
+    new_body = data.get("body")
+
+    post_to_update = Post.objects.get(user=request.user, id = post_id)
+    post_to_update.body = new_body
+
+    post_to_update.save()
+    return HttpResponse(status=204)
