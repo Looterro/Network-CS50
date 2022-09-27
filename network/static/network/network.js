@@ -49,6 +49,7 @@ function load_posts(page_number) {
                         </div>
                     </div>
                 </div>`;
+            //Append the element
             document.querySelector('#posts-section').append(element);
 
             // Hide edit button if user is not owner of the post
@@ -89,6 +90,19 @@ function load_posts(page_number) {
 
     function edit_post(post) {
         console.log(post, post.id , post.body);
+
+        console.log(post.body.slice(-23));
+        console.log(post.body.split(''));
+
+        //Remove "[Edited]" information for another edit
+        if (post.body.slice(-24) == ' <small>[Edited]</small>') {
+            let split = post.body.split('');
+            split.splice(-24);
+            post.body = split.join('');
+        }
+
+
+        //Create textarea for edit input and pre-populate with former data
         let textArea = document.createElement('div');
         textArea.innerHTML = `
             <form id="edit_form_${post.id}">
@@ -99,6 +113,7 @@ function load_posts(page_number) {
         console.log(textArea.innerHTML);
         let target = document.querySelector(`#text-area-${post.id}`)
         console.log(target.innerHTML, target.id);
+        
         //Manipulate DOM to remove former body and append the form
         target.innerHTML = '';
         target.appendChild(textArea);
@@ -115,14 +130,11 @@ function load_posts(page_number) {
             fetch('/edit_post/' + post['id'], {
                 method: 'PUT',
                 body: JSON.stringify({
-                    body: document.querySelector(`#edit-post-body-${post['id']}`).value,
+                    body: document.querySelector(`#edit-post-body-${post['id']}`).value + ' <small>[Edited]</small>',
                 })
             })
             .then(response => response.json())
-            .then(response => load_posts())
         });
-        return false;
-        //TODO ONCLICK SAVE CHANGES - Fetch? Form submission like it was? SAVE POST DOESNT WORK BECAUSE ITS ONLY GET /? METHOD INSTEAD OF PUT
     }
 
     // Pagination button
