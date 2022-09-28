@@ -53,7 +53,7 @@ function load_posts(page_number) {
             document.querySelector('#posts-section').append(element);
 
             // Hide edit button if user is not owner of the post
-            username = document.querySelector('#username').innerHTML
+            let username = document.querySelector('#username').innerHTML;
             if ( post['user'] == username ) {
                 let button = document.createElement('button');
                 button.className = 'edit btn btn-secondary btn-sm';
@@ -63,10 +63,87 @@ function load_posts(page_number) {
                 button.addEventListener('click', () => {
                     edit_post(post)
                     element.removeChild(button);
+                    element.removeChild(like_toggle);
+                    element.removeChild(counter_div);
                 })
 
                 element.appendChild(button);
             }
+
+            
+            // Create the like button and counter and then append to post
+
+            let like_toggle = document.createElement('div');
+            like_toggle.innerHTML = '&#9825;';
+            like_toggle.className = 'btn like';
+
+            let like_counter = 0;
+            if (post.likes.length > 0) {
+                like_counter = post.likes.length;
+            }
+
+            let counter_div = document.createElement('div');
+            counter_div.innerHTML = `${like_counter}`;
+            counter_div.style.display = 'inline-block';
+
+            element.appendChild(like_toggle);
+            element.appendChild(counter_div);
+
+            //Check if post is liked by user and call like function
+            fetch('/like_status', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: post.id
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                let liked = data['liked']
+
+                //If post already liked, change heart to filled and red
+                if (liked === true ){
+                    like_toggle.innerHTML = '&#9829'
+                    like_toggle.style.color = 'red';
+                }
+
+                // Onclick change like button
+                like_toggle.addEventListener('click', () => {
+                    console.log(data);
+                    console.log(liked)
+                    like_post(post.id)
+            })
+            })
+
+            function like_post(post_id) {
+                
+                fetch('like', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        id: post_id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    
+                    console.log(data)
+                    let liked = data['liked']
+                    console.log(liked)
+                    let likes = data['likes']
+
+                    if (liked === false) {
+                        like_toggle.innerHTML = '&#9825; '
+                        like_toggle.style.color = 'black';
+                    } else {
+                        like_toggle.innerHTML = '&#9829'
+                        like_toggle.style.color = 'red';
+                    }
+                    // Update the like counter without reloading the page
+                    counter_div.innerHTML = likes
+                })
+
+            }
+
         });
 
         // Hide buttons if limit of pages reached

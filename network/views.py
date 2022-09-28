@@ -124,3 +124,41 @@ def edit_post(request, post_id):
 
     post_to_update.save()
     return HttpResponse(status=204)
+
+# counting the amount of likes on the post
+@csrf_exempt
+@login_required
+def like(request):
+
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    data = json.loads(request.body)
+    post_id = data.get('id')
+    post = Post.objects.get(id=post_id)
+    user = User.objects.get(username=request.user)
+    liked = True
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+        liked = False
+    else:
+        post.likes.add(user)
+    post.save()
+
+    likes = post.likes.count()
+    return JsonResponse({'status': 201, 'liked': liked, 'likes': likes})
+
+#Checking if the post has been already liked by request.user
+@csrf_exempt
+@login_required
+def like_status(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        post_id = data.get("id")
+        post = Post.objects.get(id=post_id)
+        user = User.objects.get(username=request.user)
+        liked = False
+        if user in post.likes.all():
+            liked = True
+        return JsonResponse({'status': 201, 'liked': liked})
