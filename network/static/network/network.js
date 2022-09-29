@@ -150,7 +150,9 @@ function load_posts(posts_type, page_number) {
     // Hide previous sections
     document.querySelector('#posts-section').innerHTML = '';
     document.querySelector('#pagination').innerHTML = '';
-    document.querySelector('#userview').innerHTML = '';
+    if (posts_type == "following") {
+        document.querySelector('#userview').innerHTML = '';
+    }
 
     // Fetch posts
     fetch(`/posts/${posts_type}?page=${page_number}`)
