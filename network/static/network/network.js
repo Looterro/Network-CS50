@@ -14,39 +14,57 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => load_posts())
     }
 
-    load_posts()
+    load_posts('all_posts')
 });
 
 function load_user (user) {
 
     console.log(user);
 
-    document.querySelector('#post-form').style.display = 'none';
-    document.querySelector('#posts-section').style.display = 'none';
-    document.querySelector('#pagination').style.display = 'none';
+    //Hide previous posts from other section
+    document.querySelector('#posts-section').innerHTML = '';
+    document.querySelector('#pagination').innerHTML = '';
+    document.querySelector('#userview').innerHTML = '';
 
+    //Create new title of the page with given username
     document.querySelector('#title').innerHTML = `${user}`;
 
     let user_information = document.createElement('div');
+    user_information.id = `${user}-profile`
+
+    //Check if user is on their own profile page
+    if (user != document.querySelector('#username').innerHTML) {
+        follow_button = '<button class="follow btn btn-info">Follow</button>';
+    } else {
+        follow_button ='';
+    }
+
     user_information.innerHTML = `
         <hr>
-        <button class="btn btn-info">Follow</button> Amount of followers: 0
+        ${follow_button} <div class="followers-counter">Amount of followers: 0 | Following: 0</div>
         <hr>
     `
     document.querySelector('#userview').append(user_information)
+
+    //Load posts with given username
+    load_posts(user)
 }
 
 
-function load_posts(page_number) {
+function load_posts(posts_type, page_number) {
 
     // When loading the page, display the first page of posts
     if (page_number===undefined) {page_number = 1};
 
     // Display the title of the page
-    document.querySelector('#title').innerHTML = `All Posts`;
+    if (posts_type == "all_posts") {
+        document.querySelector('#title').innerHTML = "All Posts";
+    } else {
+        document.querySelector('#title').innerHTML = `${posts_type}`;
+    }
     
     // Fetch posts
-    fetch(`/posts?page=${page_number}`)
+    fetch(`/posts/${posts_type}?page=${page_number}`)
     .then(response => response.json())
     .then(data => {
 
@@ -61,7 +79,7 @@ function load_posts(page_number) {
             element.innerHTML = `
                 <div class="card">
                     <div class="card-title m-2">
-                        <strong>${post['user']}</strong>
+                        <button class="userview-link"><strong id='username-${post.id}'>${post['user']}</strong></button>
                         <div id="text-area-${post['id']}" class="card-subtitle m-2 text-muted">
                             ${post['body']}
                             <br>
@@ -78,7 +96,7 @@ function load_posts(page_number) {
                 let button = document.createElement('button');
                 button.className = 'edit btn btn-secondary btn-sm';
                 button.innerHTML = 'Edit';
-
+                
                 // If user clicks edit button, hide button and run edit post function
                 button.addEventListener('click', () => {
                     edit_post(post)
@@ -90,6 +108,9 @@ function load_posts(page_number) {
                 element.appendChild(button);
             }
 
+            // Create link to user page on each post
+
+            document.querySelector(`#username-${post.id}`).addEventListener('click', () => load_user(post['user']));
             
             // Create the like button and counter and then append to post
 
@@ -166,16 +187,57 @@ function load_posts(page_number) {
 
         });
 
-        // Hide buttons if limit of pages reached
-        if (page_number <= 1) {
-            document.querySelector('#previous_paginator').style.display = 'none';
-        } else if (page_number === upper_page_limit) {
-            document.querySelector('#next_paginator').style.display = 'none';
+        // Check if there is only one page, add pagination buttons
+        if (upper_page_limit !== 1) {
+
+            // Make sure that pagination div is displayed
+            document.querySelector('#pagination').style.display = 'block';
+
+            let paginator = document.createElement('div');
+            paginator.innerHTML = `
+            <div>
+                <nav>
+                    <ul class="pagination">
+                            <li id="previous_paginator" class="page-item"><a class="page-link">&laquo; previous</a></li>
+                            <li id="next_paginator" class="page-item"><a class="page-link"">next &raquo;</a></li>
+                    </ul>
+                </nav>
+            </div>
+            `
+            document.querySelector('#pagination').append(paginator);
+                
+
+
+            // Onclick change page of posts
+
+            document.querySelector('#previous_paginator').onclick = function() {
+                document.querySelector('#posts-section').innerHTML = '';
+                document.querySelector('#pagination').innerHTML = '';
+                page_number --;
+                load_posts(posts_type, page_number)
+            }
+            document.querySelector('#next_paginator').onclick = function() {
+                document.querySelector('#posts-section').innerHTML = '';
+                document.querySelector('#pagination').innerHTML = '';
+                page_number ++;
+                load_posts(posts_type, page_number)
+            }
+
+            // Hide buttons if limit of pages reached
+            if (page_number <= 1) {
+                document.querySelector('#previous_paginator').style.display = 'none';
+            } else if (page_number == upper_page_limit) {
+                document.querySelector('#next_paginator').style.display = 'none';
+            }
+            
+        } else {
+            //If there is only one page, dont display the pagination div after posts
+            document.querySelector('#pagination').style.display = 'none';
         }
+        
+        // Hide new post submission if not on page 1 or not in all_posts section
 
-        // Hide new post submission if not on page 1
-
-        if (page_number != 1) {
+        if (page_number != 1 || posts_type != "all_posts") {
             document.querySelector('#post-form').style.display = 'none';
         } else {
             document.querySelector('#post-form').style.display = 'block';
@@ -232,36 +294,6 @@ function load_posts(page_number) {
             })
             .then(response => response.json())
         });
-    }
-
-    // Pagination button
-
-    let paginator = document.createElement('div');
-    paginator.innerHTML = `
-    <div>
-        <nav>
-            <ul class="pagination">
-                    <li id="previous_paginator" class="page-item"><a class="page-link">&laquo; previous</a></li>
-                    <li id="next_paginator" class="page-item"><a class="page-link"">next &raquo;</a></li>
-            </ul>
-        </nav>
-    </div>
-    `
-    document.querySelector('#pagination').append(paginator);
-
-    // Onclick change page of posts
-
-    document.querySelector('#previous_paginator').onclick = function() {
-        document.querySelector('#posts-section').innerHTML = '';
-        document.querySelector('#pagination').innerHTML = '';
-        page_number --;
-        load_posts(page_number)
-    }
-    document.querySelector('#next_paginator').onclick = function() {
-        document.querySelector('#posts-section').innerHTML = '';
-        document.querySelector('#pagination').innerHTML = '';
-        page_number ++;
-        load_posts(page_number)
     }
 
 }

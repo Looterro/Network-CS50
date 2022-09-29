@@ -17,6 +17,20 @@
 .edit {
 margin-top: 2px;
 }
+.userview-link {
+    border: none;
+    background-color: #ffffff;
+    border-radius: 6px;
+}
+
+.follow {
+    margin-left: 10px;
+}
+
+.followers-counter {
+    margin-left: 10px;
+    display: inline-block;
+}
 
 #pagination {
     border: none #dadde0; 

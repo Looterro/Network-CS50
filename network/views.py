@@ -89,9 +89,16 @@ def posting_compose(request):
 
 @csrf_exempt
 @login_required
-def posts(request):
+def posts(request, posts_type):
 
-    posts = Post.objects.all()
+    #Filter posts
+    if posts_type == "all_posts":
+        posts = Post.objects.all()
+    # elif posts_type == "following":
+    #     posts = Post.objects.filter(user=request.user)
+    else:
+        posts = Post.objects.filter(user__username = posts_type)
+
     paginator = Paginator(posts, 10)
 
     page_number = request.GET.get('page')
