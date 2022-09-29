@@ -94,8 +94,8 @@ def posts(request, posts_type):
     #Filter posts
     if posts_type == "all_posts":
         posts = Post.objects.all()
-    # elif posts_type == "following":
-    #     posts = Post.objects.filter(user=request.user)
+    elif posts_type == "following":
+        posts = Post.objects.filter(user__in = request.user.following.all())
     else:
         posts = Post.objects.filter(user__username = posts_type)
 

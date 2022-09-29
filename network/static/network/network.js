@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('#all-posts').addEventListener('click', () => load_posts());
+    document.querySelector('#following_nav').addEventListener('click', () => load_posts('following'));
     document.querySelector('#username').addEventListener('click', () => load_user(document.querySelector('#username').innerHTML));
 
     document.querySelector('#compose-form').onsubmit = function() {
@@ -146,6 +147,10 @@ function load_posts(posts_type, page_number) {
         document.querySelector('#title').innerHTML = `${posts_type}`;
     }
     
+    // Hide previous sections
+    document.querySelector('#posts-section').innerHTML = '';
+    document.querySelector('#pagination').innerHTML = '';
+
     // Fetch posts
     fetch(`/posts/${posts_type}?page=${page_number}`)
     .then(response => response.json())
