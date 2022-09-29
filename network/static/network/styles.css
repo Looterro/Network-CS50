@@ -1,9 +1,16 @@
+
 #posts-section > div {
     border: none #dadde0; 
     box-shadow: 2px 2px 2px 2px #e9ecef; 
     border-radius: 6px;
     padding: 10px;
-    margin: 10px;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 20px;
+}
+
+#title {
+    text-align: center;
 }
 
 #post-form {
@@ -11,7 +18,9 @@
     box-shadow: 2px 2px 2px 2px #e9ecef; 
     border-radius: 6px;
     padding: 10px;
-    margin: 10px;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 20px;
 }
 
 .edit {
@@ -24,12 +33,15 @@ margin-top: 2px;
 }
 
 .follow {
-    margin-left: 10px;
+    margin: 5px;
 }
 
-.followers-counter {
-    margin-left: 10px;
-    display: inline-block;
+.userinformation {
+    margin: 5px;
+}
+
+#userview {
+    text-align: center;
 }
 
 #pagination {
@@ -37,10 +49,11 @@ margin-top: 2px;
     box-shadow: 2px 2px 2px 2px #e9ecef; 
     border-radius: 6px;
     padding: 10px;
-    margin: 10px; 
-    text-align: center;
+    margin-left: 25%;
+    margin-right: 25%;
     color: #0077ffdf;
 }
+
 
 #post-form {
     border: none;

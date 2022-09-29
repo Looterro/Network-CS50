@@ -31,107 +31,103 @@ function load_user (user) {
     document.querySelector('#title').innerHTML = `${user}`;
 
     let user_information = document.createElement('div');
-    user_information.id = `${user}-profile`
-
-    //Check if user is on their own profile page
-    if (user != document.querySelector('#username').innerHTML) {
-        follow_button = `<button id="follow-toggle-${user}" class="follow btn btn-info">Follow</button>`;
-    } else {
-        follow_button ='';
-    }
-
-    let followed_counter = 0;
-    let following_counter = 0;
+    user_information.className = "userinformation";
+    user_information.id = `${user}-profile`;
+    document.querySelector('#userview').append(user_information);
 
     fetch('/load_users/' + user)
     .then(response => response.json())
     .then(data => {
-        let users = data.user
-        console.log(users)
-        console.log(users.username)
+        let users = data.user;
+        console.log(users);
+        console.log(users.username);
         users.forEach(profile => {
 
-            let testButton = document.createElement('button');
-            testButton.className = "btn btn-primary";
-            testButton.innerHTML = "ClickME";
-            document.querySelector(`#${user}-profile`).append(testButton);
+            //Create button to toggle following status
+            let follow_toggle = document.createElement('button');
+            follow_toggle.id = `follow-toggle-${user}`;
+            follow_toggle.className = "follow btn btn-info";
+            follow_toggle.innerHTML = "Follow";
+            document.querySelector(`#${user}-profile`).append(follow_toggle);
 
-            let followedCounter = 0;
-            let followingCounter = 0;
+            //Keep track of how many given user follows other users and the amount of folllowers
+            let followedCounter = profile.followers.length;
+            let followingCounter = profile.following.length;
 
-            let testcounter_div = document.createElement('div');
-            testcounter_div.style.display = "inline-block";
-            testcounter_div.id = `${user}-counter`;
-            testcounter_div.innerHTML = `Followers: ${followedCounter} | Following: ${followingCounter}`;
-            document.querySelector(`#${user}-profile`).append(testcounter_div);
+            let followCounter_div = document.createElement('div');
+            followCounter_div.id = `${user}-counter`;
+            followCounter_div.innerHTML = `Followers: ${followedCounter} | Following: ${followingCounter}`;
 
-            console.log(profile.username)
-            console.log(profile)
-            console.log(profile.followers)
-            console.log(profile.followers.length)
-            console.log(profile.following)
-            if (profile.followers.length > 0) {
-                followed_counter = profile.followers.length;
-            } else if (profile.following.length > 0) {
-                following_counter = profile.following.length;
-            }
-        })
-    })
 
-    user_information.innerHTML = `
-    <hr>
-    ${follow_button} <div class="followers-counter">Amount of followers: ${followed_counter} | Following: ${following_counter}</div>
-    <hr>`
+            console.log(profile.username);
+            console.log(profile);
+            console.log(profile.followers);
+            console.log(profile.followers.length);
+            console.log(profile.following);
+            console.log(document.querySelector('#username').innerHTML);
 
-    document.querySelector('#userview').append(user_information)
-
-    fetch('/follow_status', {
-        method: 'PUT',
-        body: JSON.stringify({
-            username: user
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        let followed = data['followed']
-
-        if (followed === true){
-            follow_button = '<button class="follow btn btn-secondary">Unfollow</button>';
-        }
-
-        document.querySelector(`#follow-toggle-${user}`).onclick = () => {
-            console.log(data);
-            console.log(followed);
-            console.log(user);
-            follow(user);
-        }
-    })
-
-    function follow(user) {
+            document.querySelector(`#${user}-profile`).append(followCounter_div);
         
-        fetch('follow', {
-            method: 'PUT',
-            body: JSON.stringify({
-                username: user
+            //Check if user is on their own profile page and hide follow button
+            if (profile.username === document.querySelector('#username').innerHTML) {
+                follow_toggle.style.display = 'none';    
+            } 
+        
+            document.querySelector('#userview').append(user_information)
+
+            fetch('/follow_status', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    username: user
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            let followed = data['followed']
-            console.log(followed)
-            let followers = data['followers']
+            .then(response => response.json())
+            .then(data => {
+                let followed = data['followed']
+        
+                if (followed === true){
+                    follow_toggle.className = "btn btn-secondary";
+                    follow_toggle.innerHTML = "Unfollow";
+                }
+        
+                document.querySelector(`#follow-toggle-${user}`).onclick = () => {
+                    console.log(data);
+                    console.log(followed);
+                    console.log(user);
+                    follow(user);
+                }
+            })
 
-            if (followed === false ) {
-                follow_button = `<button id="follow-toggle-${user}" class="follow btn btn-info">Follow</button>`; 
+            function follow(user) {
+        
+                fetch('follow', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        username: user
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    let followed = data['followed'];
+                    console.log(followed);
+                    let followers = data['followers'];
+                    console.log(followers);
+        
+                    if (followed === false ) {
+                        follow_toggle.className = "btn btn-info";
+                        follow_toggle.innerHTML = "Follow"; 
+                    } else {
+                        follow_toggle.className = "btn btn-secondary";
+                        follow_toggle.innerHTML = "Unfollow";
+                    }
+        
+                    followCounter_div.innerHTML = `Followers: ${followers} | Following: ${followingCounter}`;
+                })
             }
-
-            followed_counter = followers
-            if (data.followers > 0) {
-                followed_counter = data.followers;
-            }
+        
         })
-    }
+    })
 
     //Load posts with given username
     load_posts(user)
