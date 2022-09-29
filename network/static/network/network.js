@@ -19,14 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function load_user (user) {
 
-    fetch('/follow_status')
-    .then(response => response.json())
-    .then(data => {
-        let users = data.user
-        users.forEach(user => {
-            console.log(user)
-        })
-    })
+
     console.log(user);
 
     //Hide previous posts from other section
@@ -49,6 +42,48 @@ function load_user (user) {
 
     let followed_counter = 0;
     let following_counter = 0;
+
+    fetch('/load_users/' + user)
+    .then(response => response.json())
+    .then(data => {
+        let users = data.user
+        console.log(users)
+        console.log(users.username)
+        users.forEach(profile => {
+
+            let testButton = document.createElement('button');
+            testButton.className = "btn btn-primary";
+            testButton.innerHTML = "ClickME";
+            document.querySelector(`#${user}-profile`).append(testButton);
+
+            let followedCounter = 0;
+            let followingCounter = 0;
+
+            let testcounter_div = document.createElement('div');
+            testcounter_div.style.display = "inline-block";
+            testcounter_div.id = `${user}-counter`;
+            testcounter_div.innerHTML = `Followers: ${followedCounter} | Following: ${followingCounter}`;
+            document.querySelector(`#${user}-profile`).append(testcounter_div);
+
+            console.log(profile.username)
+            console.log(profile)
+            console.log(profile.followers)
+            console.log(profile.followers.length)
+            console.log(profile.following)
+            if (profile.followers.length > 0) {
+                followed_counter = profile.followers.length;
+            } else if (profile.following.length > 0) {
+                following_counter = profile.following.length;
+            }
+        })
+    })
+
+    user_information.innerHTML = `
+    <hr>
+    ${follow_button} <div class="followers-counter">Amount of followers: ${followed_counter} | Following: ${following_counter}</div>
+    <hr>`
+
+    document.querySelector('#userview').append(user_information)
 
     fetch('/follow_status', {
         method: 'PUT',
@@ -97,19 +132,6 @@ function load_user (user) {
             }
         })
     }
-
-    // if (user.followers.length > 0) {
-    //     followed_counter = user.followers.length;
-    // } //else if (user.following.length > 0) {
-    //     following_counter = user.following.length;
-    // }
-
-    user_information.innerHTML = `
-    <hr>
-    ${follow_button} <div class="followers-counter">Amount of followers: ${followed_counter} | Following: ${following_counter}</div>
-    <hr>`
-
-    document.querySelector('#userview').append(user_information)
 
     //Load posts with given username
     load_posts(user)

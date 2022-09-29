@@ -9,7 +9,7 @@ class User(AbstractUser):
         return {
             "username": self.username,
             "followers": [user.username for user in self.followers.all()],
-            #"following": [user.username for user in self.following.all()]
+            "following": [user.username for user in self.following.all()]
         }
 
 class Post(models.Model):
