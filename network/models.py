@@ -3,7 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    followers = models.ManyToManyField("self", related_name="following", blank=True, symmetrical=False)
+
+    def serialize(self):
+        return {
+            "username": self.username,
+            "followers": [user.username for user in self.followers.all()],
+            #"following": [user.username for user in self.following.all()]
+        }
 
 class Post(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="posts")
@@ -25,9 +32,3 @@ class Post(models.Model):
 
     class Meta:
         ordering = ('-timestamp',)
-
-class Comment(models.Model):
-    pass
-
-class Follower(models.Model):
-    pass

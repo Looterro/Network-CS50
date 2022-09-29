@@ -19,6 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function load_user (user) {
 
+    fetch('/follow_status')
+    .then(response => response.json())
+    .then(data => {
+        let users = data.user
+        users.forEach(user => {
+            console.log(user)
+        })
+    })
     console.log(user);
 
     //Hide previous posts from other section
@@ -34,16 +42,73 @@ function load_user (user) {
 
     //Check if user is on their own profile page
     if (user != document.querySelector('#username').innerHTML) {
-        follow_button = '<button class="follow btn btn-info">Follow</button>';
+        follow_button = `<button id="follow-toggle-${user}" class="follow btn btn-info">Follow</button>`;
     } else {
         follow_button ='';
     }
 
+    let followed_counter = 0;
+    let following_counter = 0;
+
+    fetch('/follow_status', {
+        method: 'PUT',
+        body: JSON.stringify({
+            username: user
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        let followed = data['followed']
+
+        if (followed === true){
+            follow_button = '<button class="follow btn btn-secondary">Unfollow</button>';
+        }
+
+        document.querySelector(`#follow-toggle-${user}`).onclick = () => {
+            console.log(data);
+            console.log(followed);
+            console.log(user);
+            follow(user);
+        }
+    })
+
+    function follow(user) {
+        
+        fetch('follow', {
+            method: 'PUT',
+            body: JSON.stringify({
+                username: user
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            let followed = data['followed']
+            console.log(followed)
+            let followers = data['followers']
+
+            if (followed === false ) {
+                follow_button = `<button id="follow-toggle-${user}" class="follow btn btn-info">Follow</button>`; 
+            }
+
+            followed_counter = followers
+            if (data.followers > 0) {
+                followed_counter = data.followers;
+            }
+        })
+    }
+
+    // if (user.followers.length > 0) {
+    //     followed_counter = user.followers.length;
+    // } //else if (user.following.length > 0) {
+    //     following_counter = user.following.length;
+    // }
+
     user_information.innerHTML = `
-        <hr>
-        ${follow_button} <div class="followers-counter">Amount of followers: 0 | Following: 0</div>
-        <hr>
-    `
+    <hr>
+    ${follow_button} <div class="followers-counter">Amount of followers: ${followed_counter} | Following: ${following_counter}</div>
+    <hr>`
+
     document.querySelector('#userview').append(user_information)
 
     //Load posts with given username

@@ -169,3 +169,50 @@ def like_status(request):
         if user in post.likes.all():
             liked = True
         return JsonResponse({'status': 201, 'liked': liked})
+
+@csrf_exempt
+@login_required
+def follow_status(request):
+
+    if request.method =="PUT":
+        data = json.loads(request.body)
+        username = data.get("username")
+        followed_user = User.objects.get(username=username)
+        following_user = User.objects.get(username=request.user)
+        followed = False
+        if following_user in followed_user.followers.all():
+            followed = True
+        return JsonResponse({'status': 201, 'followed': followed})
+
+@csrf_exempt
+@login_required
+def follow(request):
+    
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required."}, status=400)
+
+    data = json.loads(request.body)
+    username = data.get("username")
+    followed_user = User.objects.get(username=username)
+    following_user = User.objects.get(username=request.user)
+    followed = True
+
+    if following_user in followed_user.followers.all():
+        followed_user.followers.remove(following_user)
+        followed = False
+    else:
+        followed_user.followers.add(following_user)
+    followed_user.save()
+
+    followers = followed_user.followers.count()
+    return JsonResponse({"status": 201, "followed": followed, "followers": followers})
+
+@csrf_exempt
+@login_required
+def load_users(request):
+
+    if request.method == "GET":
+        users = User.objects.all()
+        return JsonResponse({
+            "user": [user.serialize() for user in users]
+            }, safe=False)
