@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('#all-posts').addEventListener('click', () => load_posts());
+    document.querySelector('#username').addEventListener('click', () => load_user(document.querySelector('#username').innerHTML));
 
     document.querySelector('#compose-form').onsubmit = function() {
         fetch('/posting_compose', {
@@ -15,6 +16,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     load_posts()
 });
+
+function load_user (user) {
+
+    console.log(user);
+
+    document.querySelector('#post-form').style.display = 'none';
+    document.querySelector('#posts-section').style.display = 'none';
+    document.querySelector('#pagination').style.display = 'none';
+
+    document.querySelector('#title').innerHTML = `${user}`;
+
+    let user_information = document.createElement('div');
+    user_information.innerHTML = `
+        <hr>
+        <button class="btn btn-info">Follow</button> Amount of followers: 0
+        <hr>
+    `
+    document.querySelector('#userview').append(user_information)
+}
 
 
 function load_posts(page_number) {
