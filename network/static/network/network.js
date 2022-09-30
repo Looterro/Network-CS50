@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    document.querySelector('#all-posts').addEventListener('click', () => load_posts());
+    //document.querySelector('#all-posts-nav').addEventListener('click', () => load_posts());
     document.querySelector('#following_nav').addEventListener('click', () => load_posts('following'));
     document.querySelector('#username').addEventListener('click', () => load_user(document.querySelector('#username').innerHTML));
 
