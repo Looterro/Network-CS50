@@ -284,20 +284,51 @@ function load_posts(posts_type, page_number) {
             // Make sure that pagination div is displayed
             document.querySelector('#pagination').style.display = 'block';
 
+            //Generate a string of list buttons that change the page number
+            pagination_btn_list = "";
+
+            for (let i=1; i <= upper_page_limit; i++) {
+                let pagination_span = document.createElement('span');
+                let pagination_list_btn = document.createElement('li');
+                pagination_list_btn.id = `paginator-${i}`;
+
+                //Check if one of the buttons is the same as the current page and change class
+                if (page_number == i){
+                    pagination_list_btn.className = "page-item active";
+                } else {
+                    pagination_list_btn.className = "page-item";
+                }
+
+                //Add contents to the string containing list of buttons
+                pagination_list_btn.innerHTML = `<a class="page-link">${i}</a></li>`;
+                pagination_span.append(pagination_list_btn);
+                pagination_btn_list += pagination_span.innerHTML;
+            }
+
             let paginator = document.createElement('div');
             paginator.innerHTML = `
             <div>
                 <nav>
                     <ul class="pagination">
                             <li id="previous_paginator" class="page-item"><a class="page-link">&laquo; previous</a></li>
+                            ${pagination_btn_list}
                             <li id="next_paginator" class="page-item"><a class="page-link"">next &raquo;</a></li>
                     </ul>
                 </nav>
             </div>
             `
             document.querySelector('#pagination').append(paginator);
-                
 
+            //Onlick change page number to the value of the button
+            
+            for (let i=1; i <= upper_page_limit; i++) {
+                document.querySelector(`#paginator-${i}`).onclick = function() {
+                    document.querySelector('#posts-section').innerHTML = '';
+                    document.querySelector('#pagination').innerHTML = '';
+                    page_number = i;
+                    load_posts(posts_type, page_number);
+                }
+            }
 
             // Onclick change page of posts
 
