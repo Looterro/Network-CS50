@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: document.querySelector('#post-body').value,
             })
         })
-        .then(response => response.json())
         .then(response => load_posts())
+
     }
 
     load_posts('all_posts')
@@ -329,8 +329,10 @@ function load_posts(posts_type, page_number) {
                             body: document.querySelector(`#comment-body-${post.id}`).value
                         })
                     })
-                    .then(response => response.json())
                     .then(response => load_comments(post.id))
+                    document.querySelector(`#comment-body-${post.id}`).value='';
+
+                    return false
                 }
                 //load all comments
                 load_comments(post.id);
@@ -338,6 +340,8 @@ function load_posts(posts_type, page_number) {
 
             function load_comments(post_id) {
                 //create div and append to comment_div then fetch comments in their own divs and append to comments
+
+                comments_div.innerHTML='';
 
                 fetch('/comments/' + post_id)
                 .then(response => response.json())
@@ -506,7 +510,8 @@ function load_posts(posts_type, page_number) {
                     body: document.querySelector(`#edit-post-body-${post['id']}`).value + ' <small>[Edited]</small>',
                 })
             })
-            .then(response => response.json())
+
+            return false
         });
     }
 
