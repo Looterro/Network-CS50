@@ -4,12 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#following_nav').addEventListener('click', () => load_posts('following'));
     document.querySelector('#username').addEventListener('click', () => load_user(document.querySelector('#username').innerHTML));
 
+    const csrf_token = getCookie('csrftoken');
     document.querySelector('#compose-form').onsubmit = function() {
         fetch('/posting_compose', {
             method: 'POST',
             body: JSON.stringify({
                 body: document.querySelector('#post-body').value,
-            })
+            }),
+            credentials: 'same-origin',
+            headers: {
+                "X-CSRFToken": csrf_token
+            }
         })
         .then(response => load_posts())
 
@@ -17,6 +22,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     load_posts('all_posts')
 });
+
+//Getting csrf cookie to safely submit the data through PUT and POST fetch
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 function load_user (user) {
 
@@ -72,13 +94,18 @@ function load_user (user) {
                 follow_toggle.style.display = 'none';    
             } 
         
-            document.querySelector('#userview').append(user_information)
+            document.querySelector('#userview').append(user_information);
 
+            const csrf_token = getCookie('csrftoken');
             fetch('/follow_status', {
                 method: 'PUT',
                 body: JSON.stringify({
                     username: user
-                })
+                }),
+                credentials: 'same-origin',
+                headers: {
+                    "X-CSRFToken": csrf_token
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -98,12 +125,17 @@ function load_user (user) {
             })
 
             function follow(user) {
-        
+                
+                const csrf_token = getCookie('csrftoken');
                 fetch('follow', {
                     method: 'PUT',
                     body: JSON.stringify({
                         username: user
-                    })
+                    }),
+                    credentials: 'same-origin',
+                    headers: {
+                        "X-CSRFToken": csrf_token
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -222,11 +254,16 @@ function load_posts(posts_type, page_number) {
             element.appendChild(counter_div);
 
             //Check if post is liked by user and call like function
+            const csrf_token = getCookie('csrftoken');
             fetch('/like_status', {
                 method: 'PUT',
                 body: JSON.stringify({
                     id: post.id
-                })
+                }),
+                credentials: 'same-origin',
+                headers: {
+                    "X-CSRFToken": csrf_token
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -249,11 +286,16 @@ function load_posts(posts_type, page_number) {
 
             function like_post(post_id) {
                 
+                const csrf_token = getCookie('csrftoken');
                 fetch('like', {
                     method: 'PUT',
                     body: JSON.stringify({
                         id: post_id
-                    })
+                    }),
+                    credentials: 'same-origin',
+                    headers: {
+                        "X-CSRFToken": csrf_token
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -323,11 +365,16 @@ function load_posts(posts_type, page_number) {
                 //onsubmit add comment
                 document.querySelector(`#comment-form-${post.id}`).onsubmit = function (event) {
 
+                    const csrf_token = getCookie('csrftoken');
                     fetch('/comments_compose/' + post['id'], {
                         method: 'POST',
                         body: JSON.stringify({
                             body: document.querySelector(`#comment-body-${post.id}`).value
-                        })
+                        }),
+                        credentials: 'same-origin',
+                        headers: {
+                            "X-CSRFToken": csrf_token
+                        }
                     })
                     .then(response => load_comments(post.id))
                     document.querySelector(`#comment-body-${post.id}`).value='';
@@ -504,11 +551,17 @@ function load_posts(posts_type, page_number) {
         // Use PUT to change the text of a post
         document.querySelector(`#edit_form_${post.id}`).addEventListener('submit', function() {
             //fetch post and put new value and add ID
+            
+            const csrf_token = getCookie('csrftoken');
             fetch('/edit_post/' + post['id'], {
                 method: 'PUT',
                 body: JSON.stringify({
                     body: document.querySelector(`#edit-post-body-${post['id']}`).value + ' <small>[Edited]</small>',
-                })
+                }),
+                credentials: 'same-origin',
+                headers: {
+                    "X-CSRFToken": csrf_token
+                }
             })
 
             return false

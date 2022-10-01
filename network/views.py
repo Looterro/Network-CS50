@@ -67,7 +67,6 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-@csrf_exempt
 @login_required
 def posting_compose(request):
 
@@ -87,7 +86,7 @@ def posting_compose(request):
     
     return HttpResponseRedirect(reverse("index"))
 
-@csrf_exempt
+
 @login_required
 def posts(request, posts_type):
 
@@ -112,7 +111,6 @@ def posts(request, posts_type):
             "upper_page_limit": upper_page_limit,
             }, safe=False)
 
-@csrf_exempt
 @login_required
 def edit_post(request, post_id):
 
@@ -133,7 +131,6 @@ def edit_post(request, post_id):
     return HttpResponse(status=204)
 
 # counting the amount of likes on the post
-@csrf_exempt
 @login_required
 def like(request):
 
@@ -157,7 +154,6 @@ def like(request):
     return JsonResponse({'status': 201, 'liked': liked, 'likes': likes})
 
 #Checking if the post has been already liked by request.user
-@csrf_exempt
 @login_required
 def like_status(request):
     if request.method == "PUT":
@@ -170,7 +166,7 @@ def like_status(request):
             liked = True
         return JsonResponse({'status': 201, 'liked': liked})
 
-@csrf_exempt
+
 @login_required
 def follow_status(request):
 
@@ -184,7 +180,7 @@ def follow_status(request):
             followed = True
         return JsonResponse({'status': 201, 'followed': followed})
 
-@csrf_exempt
+
 @login_required
 def follow(request):
     
@@ -207,7 +203,7 @@ def follow(request):
     followers = followed_user.followers.count()
     return JsonResponse({"status": 201, "followed": followed, "followers": followers})
 
-@csrf_exempt
+
 @login_required
 def load_users(request, user):
 
@@ -217,7 +213,7 @@ def load_users(request, user):
             "user": [user.serialize() for user in users]
             }, safe=False)
 
-@csrf_exempt
+
 @login_required
 def comments(request, post_id):
     
@@ -228,7 +224,6 @@ def comments(request, post_id):
             "comments": [comment.serialize() for comment in comments],
         })
 
-@csrf_exempt
 @login_required
 def comments_compose(request, post_id):
     
