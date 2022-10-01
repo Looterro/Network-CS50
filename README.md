@@ -63,6 +63,6 @@ python manage.py runserver
 **Comments section:** 
 
 - Additional feature is comments section that allows users to post their comments under a post. After clicking a "Comments" button appended to a given post, a new body appears with comment form and users comments to that post, starting from the oldest at the top.
-- The comment section is scrollable once the sum of individual comments height is higher than the max height of the comments section.
+- A comment section is scrollable once the sum of individual comments height is higher than the max height of it.
 
 
