@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function load_user (user) {
 
-
     console.log(user);
 
     //Hide previous posts from other section
@@ -43,7 +42,6 @@ function load_user (user) {
         console.log(users);
         console.log(users.username);
         users.forEach(profile => {
-
             //Create button to toggle following status
             let follow_toggle = document.createElement('button');
             follow_toggle.id = `follow-toggle-${user}`;
