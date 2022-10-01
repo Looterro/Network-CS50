@@ -1,7 +1,4 @@
 # Network-CS50
-Harvard's CS50 Project 4 - Social networking site
-
-# Network-CS50
 
 Harvard's CS50 Project 4 - Social networking site. Its a single page app written using Django framework, built-in API and Ajax and JS language.
 
