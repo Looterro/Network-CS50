@@ -192,6 +192,8 @@ function load_posts(posts_type, page_number) {
                     element.removeChild(button);
                     element.removeChild(like_toggle);
                     element.removeChild(counter_div);
+                    element.removeChild(comment_toggle);
+                    element.removeChild(comment_div);
                 })
 
                 element.appendChild(button);
@@ -274,6 +276,98 @@ function load_posts(posts_type, page_number) {
 
             }
 
+            // Create the comment button and append to post
+
+            let comment_toggle = document.createElement('div');
+            comment_toggle.innerHTML = 'Comments';
+            comment_toggle.id = `${post.id}-comments-btn`
+            comment_toggle.className = 'btn comments-toggle btn-light btn-sm mx-2'
+
+            element.appendChild(comment_toggle);
+
+            //Create comment section to display comments and comment form to post comments
+            let comment_div = document.createElement('div');
+            comment_div.id = `${post.id}-comment-div`;
+            comment_div.className = 'comment_div m-3';
+
+            //Div for fetched comments
+            let comments_div = document.createElement('div');
+            comments_div.className = "comments_div"
+
+            //Append comment form to comment section
+            let comment_form = document.createElement('div');
+            comment_form.id = `${post.id}-comment-form`;
+            comment_form.innerHTML = `
+                <form id="comment-form-${post.id}">
+                    <div>
+                        <textarea id="comment-body-${post.id}" class="form-control m-1" placeholder="Write your comment here"></textarea>
+                        <input type="submit" class="btn btn-primary btn-sm m-1" value="Comment">
+                    </div>
+                </form>
+            `;
+
+            comment_toggle.addEventListener('click', () => {
+
+                //Hide comments section if already opened or display one
+                if (element.contains(comment_div)){
+                    element.removeChild(comment_div);
+                    comments_div.innerHTML='';
+                    comment_div.removeChild(comments_div);
+                    comment_div.removeChild(comment_form);
+                } else {
+                    element.appendChild(comment_div);
+                    comment_div.appendChild(comments_div);
+                    comment_div.appendChild(comment_form);
+                }
+
+                //onsubmit add comment
+                document.querySelector(`#comment-form-${post.id}`).onsubmit = function (event) {
+
+                    fetch('/comments_compose/' + post['id'], {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            body: document.querySelector(`#comment-body-${post.id}`).value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(response => load_comments(post.id))
+                }
+                //load all comments
+                load_comments(post.id);
+            });
+
+            function load_comments(post_id) {
+                //create div and append to comment_div then fetch comments in their own divs and append to comments
+
+                fetch('/comments/' + post_id)
+                .then(response => response.json())
+                .then(data => {
+
+                    let comments = data.comments;
+                    comments.forEach(comment => {
+                        let comment_element = document.createElement('div');
+                        comment_element.className = 'comment mx-2'
+                        comment_element.innerHTML = `
+                        <div>
+                            <div>
+                            <button class="userview-link-comments" id='username-comment-${comment.id}'><small><strong>${comment['user']}</strong></small></button>
+                                <div class="text-muted">
+                                    <small>${comment['body']}</small>
+                                    <br>
+                                    <small>${comment['timestamp']}</small>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+
+                        comments_div.appendChild(comment_element);
+
+                        document.querySelector(`#username-comment-${comment.id}`).addEventListener('click', () => load_user(comment['user']));
+
+
+                    });
+                });
+            }
         });
 
         // Check if there is only one page, add pagination buttons

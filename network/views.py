@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.paginator import Paginator
 
-from .models import User, Post
+from .models import User, Post, Comment
 
 
 def index(request):
@@ -75,7 +75,7 @@ def posting_compose(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # Get contents of email
+    # Get contents of post
     data = json.loads(request.body)
     body = data.get("body", "")
 
@@ -216,3 +216,36 @@ def load_users(request, user):
         return JsonResponse({
             "user": [user.serialize() for user in users]
             }, safe=False)
+
+@csrf_exempt
+@login_required
+def comments(request, post_id):
+    
+    comments = Comment.objects.filter(post__id = post_id)
+
+    if request.method == "GET":
+        return JsonResponse({
+            "comments": [comment.serialize() for comment in comments],
+        })
+
+@csrf_exempt
+@login_required
+def comments_compose(request, post_id):
+    
+    # Composing a new comment must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get contents of comment
+    data = json.loads(request.body)
+    body = data.get("body")
+
+    post_to_update = Post.objects.get(id = post_id)
+
+    comment = Comment(
+        post = post_to_update,
+        user = request.user,
+        body = body,
+    )
+    comment.save()
+    return HttpResponse(status=204)

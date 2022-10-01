@@ -32,3 +32,22 @@ class Post(models.Model):
 
     class Meta:
         ordering = ('-timestamp',)
+
+class Comment(models.Model):
+    post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="comments")
+    body = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Post #{self.post.id} Comment ({self.user.username}) #{self.id}"
+    
+    def serialize(self):
+        return {
+            "post": self.post.id,
+            "id": self.id,
+            "user": self.user.username,
+            "body": self.body,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+        }
+    
