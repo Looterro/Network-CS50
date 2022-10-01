@@ -65,4 +65,9 @@ python manage.py runserver
 - Additional feature is comments section that allows users to post their comments under a post. After clicking a "Comments" button appended to a given post, a new body appears with comment form and users comments to that post, starting from the oldest at the top.
 - A comment section is scrollable once the sum of individual comments height is higher than the max height of it.
 
+## Other branches:
+
+- The project is mostly written in javascript as a single page app.
+- The project also contains branches with code written predominantly in Python and React to test other approaches to the problem.
+
 
