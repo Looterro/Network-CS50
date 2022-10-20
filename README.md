@@ -1,4 +1,4 @@
-# Network-CS50
+# Network-CS50-JS
 
 Harvard's CS50 Project 4 - Social networking site. Its a single page app written using Django framework, built-in API and Ajax, JS and Python language.
 
@@ -6,11 +6,11 @@ Full specification, API description and setup: https://cs50.harvard.edu/web/2020
 
 ## Setup
 
-Clone this repository and change directory to mail:
+Clone this repository and change directory to network:
 
 ```bash
 git clone https://github.com/Looterro/Network-CS50.git
-cd network
+cd Network-CS50-master
 ```
 
 Install Django:
