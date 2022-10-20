@@ -68,6 +68,6 @@ python manage.py runserver
 ## Other branches:
 
 - The project is mostly written in javascript as a single page app.
-- The project also contains branches with code written predominantly in Python and React to test other approaches to the problem.
+- The project also contains branches with parts of the code written predominantly in Python and React to test other approaches to the problem.
 
 
